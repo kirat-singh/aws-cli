@@ -11,6 +11,7 @@
 # ANY KIND, either express or implied. See the License for the specific
 # language governing permissions and limitations under the License.
 import logging
+import os
 import sys
 import threading
 
@@ -175,6 +176,8 @@ class IOWriterThread(threading.Thread):
                 if fileobj is not None:
                     fileobj.close()
                     del self.fd_descriptor_cache[task.filename]
+                    if task.last_modified is not None:
+                        os.utime(task.filename, (task.last_modified, task.last_modified))
 
     def _cleanup(self):
         for fileobj in self.fd_descriptor_cache.values():
